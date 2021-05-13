@@ -14,8 +14,7 @@ class Node:
     def __init__(self, broker_host):
         # TODO: Implement proper credentials management
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=broker_host,
-                                      credentials=pika.PlainCredentials("distrib", "test")))
+            pika.ConnectionParameters(host=broker_host))
         self.channel = self.connection.channel()
         self.channel.queue_declare(queue='master')
         self.channel.queue_declare(queue='slaves')
@@ -130,7 +129,7 @@ class MasterNode(Node):
                 sigma_tilde += eigen @ eigen.T
             sigma_tilde /= self.batches_number
             print("Computed! Time (seconds): " + str(time.time() - self.start_time))
-        else:
+        elif len(self.batches) != 0:
             request = dict()
             request["batch"] = self.batches.pop()
             request["rank"] = self.rank
